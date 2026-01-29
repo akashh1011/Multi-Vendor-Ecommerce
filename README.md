@@ -194,8 +194,14 @@ npm run prisma:studio     # Open Prisma Studio (DB GUI)
 - Multi-payment gateway support
 - Redis caching
 
+
+## TODO
+- Complete authentication routes
+
 ## License
 
 This project is licensed under the **MIT License**
+
+
 
 
