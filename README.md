@@ -16,8 +16,6 @@ The system is built using **Node.js** and **Express** for the backend, with **Pr
 Mind Map Link \
 [https://whimsical.com/multi-vendor-ecommerce-app-99Z3tRaESj8TANCKrcCBLc](https://whimsical.com/multi-vendor-ecommerce-app-99Z3tRaESj8TANCKrcCBLc)
 
-<iframe style="border:none" width="800" height="450" src="https://whimsical.com/embed/99Z3tRaESj8TANCKrcCBLc"></iframe>
-
 
 # Backend
 
@@ -199,3 +197,5 @@ npm run prisma:studio     # Open Prisma Studio (DB GUI)
 ## License
 
 This project is licensed under the **MIT License**
+
+
