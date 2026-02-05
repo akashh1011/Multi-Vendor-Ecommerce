@@ -33,12 +33,17 @@ export const JWT_ENV = {
   EXPIRES_IN: process.env.JWT_EXPIRES_IN || "1h",
 };
 
+export const DATABASE_ENV = {
+  URL: requireEnv("DATABASE_URL", "postgresql://user:password@localhost:5432/multivendorecommerce"),
+};  
+
 const ENV = {
   NODE_ENV: process.env.NODE_ENV || "development",
   PORT: Number(process.env.PORT) || 3000,
   JWT: JWT_ENV,
   LOG: LOG_ENV,
   CORS: CORS_ENV,
+  DATABASE: DATABASE_ENV,
 };
 
 export default Object.freeze(ENV);
