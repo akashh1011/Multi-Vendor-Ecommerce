@@ -74,6 +74,7 @@ const login = async (credentials) => {
     {
       id: user.id,
       email: user.email,
+      roles: user.roles,
     },
     ENV.JWT.SECRET,
     { expiresIn: "7d" }
@@ -85,6 +86,7 @@ const login = async (credentials) => {
       id: user.id,
       email: user.email,
       name: user.name,
+      roles: user.roles,
     },
   };
 };
