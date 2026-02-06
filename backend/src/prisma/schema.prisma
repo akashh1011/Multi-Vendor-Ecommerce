@@ -16,20 +16,19 @@ enum Role {
 
 // ------------------ USER TABLE ------------------
 model User {
-  id        String   @id @default(uuid())
+  id        String    @id @default(uuid())
   name      String
-  email     String   @unique
-  username  String   @unique
-  phone     String   @unique
+  email     String    @unique
+  username  String    @unique
+  phone     String    @unique
   password  String
-  roles     Role[]   @default([CUSTOMER])
-  isActive  Boolean  @default(true)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  admin    Admin?
-  vendor   Vendor?
-  customer Customer?
+  roles     Role[]    @default([CUSTOMER])
+  isActive  Boolean   @default(true)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  admin     Admin?
+  vendor    Vendor?
+  customer  Customer?
 
   @@index([email, username])
 }
@@ -39,8 +38,7 @@ model Admin {
   userId    String   @unique
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-
-  user User @relation(fields: [userId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
 }
 
 model Customer {
@@ -49,40 +47,48 @@ model Customer {
   orders    Order[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-
-  user    User     @relation(fields: [userId], references: [id])
-  ratings Rating[]
+  user      User     @relation(fields: [userId], references: [id])
+  ratings   Rating[]
 }
 
 model Vendor {
-  id        String   @id @default(uuid())
-  userId    String   @unique
+  id        String    @id @default(uuid())
+  userId    String    @unique
   company   String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  user     User      @relation(fields: [userId], references: [id])
-  products Product[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  user      User      @relation(fields: [userId], references: [id])
+  products  Product[]
 }
 
 model Product {
-  id            String   @id @default(uuid())
+  id            String      @id @default(uuid())
   name          String
   description   String
   price         Float
   discountPrice Float?
   images        String[]
+  categoryId    String?
   vendorId      String
-  isActive      Boolean  @default(true)
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  isActive      Boolean     @default(true)
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  ratings       Rating[]
+  slug          String      @unique
+  orderItems    OrderItem[]
+  category      Category?   @relation(fields: [categoryId], references: [id])
+  vendor        Vendor      @relation(fields: [vendorId], references: [id])
 
-  ratings    Rating[]
-  orderItems OrderItem[]
-
-  vendor Vendor @relation(fields: [vendorId], references: [id])
-
+  @@index([categoryId])
   @@index([vendorId])
+}
+
+model Category {
+  id        String    @id @default(uuid())
+  name      String    @unique
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  products  Product[]
 }
 
 model Rating {
@@ -93,9 +99,8 @@ model Rating {
   comment    String?
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
-
-  product  Product  @relation(fields: [productId], references: [id])
-  customer Customer @relation(fields: [customerId], references: [id])
+  product    Product  @relation(fields: [productId], references: [id])
+  customer   Customer @relation(fields: [customerId], references: [id])
 
   // this ensures that a customer can only rate a product once
   @@unique([productId, customerId])
@@ -108,8 +113,7 @@ model Order {
   items       OrderItem[]
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt
-
-  customer Customer @relation(fields: [customerId], references: [id])
+  customer    Customer    @relation(fields: [customerId], references: [id])
 
   @@index([customerId])
 }
@@ -122,9 +126,8 @@ model OrderItem {
   price     Float
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-
-  order   Order   @relation(fields: [orderId], references: [id])
-  product Product @relation(fields: [productId], references: [id])
+  order     Order    @relation(fields: [orderId], references: [id])
+  product   Product  @relation(fields: [productId], references: [id])
 
   @@unique([orderId, productId]) // prevent duplicate product in same order
 }
