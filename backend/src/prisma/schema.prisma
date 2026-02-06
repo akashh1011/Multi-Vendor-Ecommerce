@@ -23,6 +23,7 @@ model User {
   phone     String   @unique
   password  String
   roles     Role[]   @default([CUSTOMER])
+  isActive  Boolean  @default(true)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -72,6 +73,7 @@ model Product {
   discountPrice Float?
   images        String[]
   vendorId      String
+  isActive      Boolean  @default(true)
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
