@@ -1,12 +1,10 @@
-// prisma/schema.prisma
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
-}
-
-generator client {
-  provider = "prisma-client-js"
 }
 
 // ------------------ ENUMS ------------------
@@ -18,99 +16,17 @@ enum Role {
 
 // ------------------ USER TABLE ------------------
 model User {
-  id        String    @id @default(uuid())
-  email     String    @unique
-  password  String
+  id        String   @id @default(uuid())
   name      String
-  roles     Role[]
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  email     String   @unique
+  username  String   @unique
+  phone     String   @unique
+  password  String
+  roles     Role[]   @default([CUSTOMER])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   // Role-specific relations
-  vendor    Vendor?   @relation(fields: [vendorId], references: [id])
-  vendorId  String?   @unique
-  customer  Customer? @relation(fields: [customerId], references: [id])
-  customerId String?  @unique
-}
-
-// ------------------ VENDOR TABLE ------------------
-model Vendor {
-  id         String     @id @default(uuid())
-  shopName   String
-  approved   Boolean    @default(false)
-  createdAt  DateTime   @default(now())
-  updatedAt  DateTime   @updatedAt
-
-  // Relation to User
-  user       User
-
-  // Products sold by vendor
-  products   Product[]
-}
-
-// ------------------ CUSTOMER TABLE ------------------
-model Customer {
-  id        String     @id @default(uuid())
-  phone     String?
-  address   String?
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
-
-  // Relation to User
-  user      User
-
-  // Orders & Cart
-  orders    Order[]
-  cartItems CartItem[]
-}
-
-// ------------------ PRODUCT TABLE ------------------
-model Product {
-  id          String    @id @default(uuid())
-  vendorId    String
-  name        String
-  description String?
-  price       Float
-  stock       Int       @default(0)
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-
-  vendor      Vendor    @relation(fields: [vendorId], references: [id])
-  orderItems  OrderItem[]
-}
-
-// ------------------ ORDER TABLE ------------------
-model Order {
-  id          String      @id @default(uuid())
-  customerId  String
-  total       Float
-  status      String      @default("PENDING")
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
-
-  customer    Customer    @relation(fields: [customerId], references: [id])
-  items       OrderItem[]
-}
-
-// ------------------ ORDER ITEM TABLE ------------------
-model OrderItem {
-  id        String   @id @default(uuid())
-  orderId   String
-  productId String
-  quantity  Int
-  price     Float
-
-  order     Order    @relation(fields: [orderId], references: [id])
-  product   Product  @relation(fields: [productId], references: [id])
-}
-
-// ------------------ CART ITEM TABLE ------------------
-model CartItem {
-  id         String   @id @default(uuid())
-  customerId String
-  productId  String
-  quantity   Int      @default(1)
-
-  customer   Customer @relation(fields: [customerId], references: [id])
-  product    Product  @relation(fields: [productId], references: [id])
+  vendorId   String? @unique
+  customerId String? @unique
 }

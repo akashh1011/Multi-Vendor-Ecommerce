@@ -5,3 +5,6 @@ logs
 *.log
 
 *temp*.*
+
+generated/prisma
+/generated/prisma

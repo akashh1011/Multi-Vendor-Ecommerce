@@ -1,3 +1,4 @@
+import ENV from "../config/envConfig.js";
 import { consoleLogger } from "../utils/logger.js";
 
 const errorHandler = (error, req, res, _) => {
@@ -15,7 +16,8 @@ const errorHandler = (error, req, res, _) => {
     stack: error?.stack || "No stack available",
   });
 
-  const isProduction = process.env.NODE_ENV === "production";
+  const isProduction = ENV.NODE_ENV === "production";
+
   const responseError = isProduction
     ? { error: message }
     : { error: message, stack: error?.stack };
