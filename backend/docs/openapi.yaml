@@ -1,0 +1,239 @@
+openapi: 3.0.4
+info:
+  title: Multi Vendor Ecommerce
+  description: |
+    Project Description
+  termsOfService: 
+  contact:
+    email: deveshkumarsingh75@gmail.com
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0.html
+  version: 1.0.0
+externalDocs:
+  description: Github Repo
+  url: https://github.com/techux/Multi-Vendor-Ecommerce
+servers:
+  - url: http://localhost:3000
+tags:
+  - name: auth
+    description: Everything about authentication
+
+paths:
+  /auth/register:
+    post:
+      tags:
+        - auth
+      summary: Register a new member
+      description: Add a new customer or vendor to the store
+      operationId: registerUser
+      requestBody:
+        description: User registration payload
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserRegistration'
+      responses:
+        '200':
+          description: Successful registration
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponseId'
+        '400':
+          description: Invalid input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Validation exception
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /auth/login:
+    post:
+      tags:
+        - auth
+      summary: Login a user
+      description: Authenticate user and return JWT token
+      operationId: loginUser
+      requestBody:
+        description: User login credentials
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: devesh@gmail.com
+                password:
+                  type: string
+                  example: '12345'
+      responses:
+        '200':
+          description: Successful login
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginResponse'
+        '401':
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: 47a1dc63-6e44-40c5-b213-74e0c45d92ba
+        name:
+          type: string
+          example: Devesh
+        email:
+          type: string
+          format: email
+          example: devesh@gmail.com
+        phone:
+          type: string
+          example: '12345'
+        username:
+          type: string
+          example: theUser
+        password:
+          type: string
+          example: '12345'
+        roles:
+          type: array
+          description: Roles assigned to the user. Defaults to CUSTOMER.
+          items:
+            type: string
+            enum:
+              - CUSTOMER
+              - VENDOR
+          default:
+            - CUSTOMER
+          example:
+            - CUSTOMER
+      required:
+        - name
+        - email
+        - password
+      xml:
+        name: user
+
+    SuccessResponseId:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        message:
+          type: string
+          example: Registration Success
+        data:
+          type: string
+          format: uuid
+          example: 47a1dc63-6e44-40c5-b213-74e0c45d92ba
+
+    ErrorResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        message:
+          type: string
+          example: Server error
+    
+    UserRegistration:
+      type: object
+      properties:
+        name:
+          type: string
+          example: Rajat
+        email:
+          type: string
+          format: email
+          example: rajat@gmail.com
+        phone:
+          type: string
+          example: '0123456789'
+        username:
+          type: string
+          example: rajat
+        password:
+          type: string
+          format: password
+          example: Rajat@12345
+        role:
+          type: string
+          description: Optional role for the user. Can be CUSTOMER or VENDOR. Defaults to CUSTOMER.
+          enum:
+            - CUSTOMER
+            - VENDOR
+          default: CUSTOMER
+          nullable: true
+      required:
+        - name
+        - email
+        - password
+
+
+    LoginResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        message:
+          type: string
+          example: Login Success
+        data:
+          type: object
+          properties:
+            token:
+              type: string
+              example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+            user:
+              $ref: '#/components/schemas/UserLoginInfo'
+
+    UserLoginInfo:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: 9e0d4632-1de7-40cd-b7f0-1bf8b89e9b8f
+        name:
+          type: string
+          example: Devesh
+        email:
+          type: string
+          format: email
+          example: devesh@gmail.com
+
