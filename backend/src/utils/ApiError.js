@@ -1,3 +1,4 @@
+import ENV from "../config/envConfig.js";
 class ApiError extends Error {
   constructor(
     statusCode = 500,
@@ -10,7 +11,7 @@ class ApiError extends Error {
     this.statusCode = statusCode;
     this.errors = errors;
 
-    if (process.env.NODE_ENV !== "production") {
+    if (ENV.NODE_ENV !== "production") {
       if (stack) {
         this.stack = stack;
       } else {
