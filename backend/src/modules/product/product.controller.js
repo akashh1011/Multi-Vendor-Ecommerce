@@ -36,6 +36,36 @@ const productBySlug = expressAsyncHandler(async (req, res) => {
   return ApiResponse(res, 200, "Product retrieved successfully", product);
 });
 
+const productsByCategory = expressAsyncHandler(async (req, res) => {
+  const errors = productValidator.getProductsByCategorySchema.validate(
+    req.params
+  ).error;
+  if (errors) {
+    throw new ApiError(400, "Invalid category ID", errors.details);
+  }
+  const products = await productService.getProductsByCategory(
+    req.params.categoryId,
+    req.query
+  );
+  return ApiResponse(res, 200, "Products retrieved successfully", products);
+});
+
+const getAllProductsForVendor = expressAsyncHandler(async (req, res) => {
+  const errors = productValidator.getAllProductsSchema.validate(
+    req.query
+  ).error;
+
+  if (errors) {
+    throw new ApiError(400, "Invalid query parameters", errors.details);
+  }
+
+  const products = await productService.getAllProductsForVendor(
+    req.user,
+    req.query
+  );
+  return ApiResponse(res, 200, "Products retrieved successfully", products);
+});
+
 const createProduct = expressAsyncHandler(async (req, res) => {
   const errors = productValidator.createProductSchema.validate(req.body).error;
   if (errors) {
@@ -98,6 +128,8 @@ export default {
   allProducts,
   productById,
   productBySlug,
+  productsByCategory,
+  getAllProductsForVendor,
   createProduct,
   updateProduct,
   toggleProductStatus,
