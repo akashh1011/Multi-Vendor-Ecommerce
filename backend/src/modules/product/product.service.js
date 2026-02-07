@@ -77,6 +77,79 @@ const getProductBySlug = async (slug) => {
   return product;
 };
 
+const getProductsByCategory = async (categoryId, { page = 1, limit = 10 }) => {
+  const skip = (page - 1) * limit;
+  const total = await prisma.product.count({
+    where: {
+      isActive: true,
+      categoryId,
+    },
+  });
+
+  const products = await prisma.product.findMany({
+    where: {
+      isActive: true,
+      categoryId,
+    },
+    include: {
+      category: true,
+      vendor: true,
+      ratings: true,
+    },
+    skip,
+    take: limit,
+    orderBy: { createdAt: "desc" },
+  });
+
+  return {
+    products,
+    page,
+    limit,
+    total,
+    totalPages: Math.ceil(total / limit),
+  };
+};
+
+const getAllProductsForVendor = async (user, query) => {
+  const { page = 1, limit = 10 } = query;
+
+  let vendorId;
+  if (user.roles.includes("ADMIN")) {
+    vendorId = query.vendorId; // Admin can pass vendorId to see all products
+  } else {
+    vendorId = user.id; // Vendor can see only their products
+  }
+
+  const skip = (page - 1) * limit;
+  const total = await prisma.product.count({
+    where: {
+      vendorId,
+    },
+  });
+
+  const products = await prisma.product.findMany({
+    where: {
+      vendorId,
+    },
+    include: {
+      category: true,
+      vendor: true,
+      ratings: true,
+    },
+    skip,
+    take: limit,
+    orderBy: { createdAt: "desc" },
+  });
+
+  return {
+    products,
+    page,
+    limit,
+    total,
+    totalPages: Math.ceil(total / limit),
+  };
+};
+
 // create product
 const createProduct = async (data, user) => {
   const { name, description, price, discountPrice, categoryId, isActive } =
@@ -192,6 +265,8 @@ const deleteProduct = async (id, user) => {
 export default {
   getAllProducts,
   getProductById,
+  getProductsByCategory,
+  getAllProductsForVendor,
   getProductBySlug,
   createProduct,
   updateProduct,

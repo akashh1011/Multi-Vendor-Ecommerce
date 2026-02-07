@@ -7,6 +7,13 @@ const router = express.Router();
 const ADMIN_VENDOR = ["ADMIN", "VENDOR"];
 
 router.get("/", productController.allProducts);
+router.get(
+  "/vendor",
+  auth,
+  authorize(ADMIN_VENDOR),
+  productController.getAllProductsForVendor
+);
+router.get("/category/:categoryId", productController.productsByCategory);
 router.get("/:id", productController.productById);
 router.get("/slug/:slug", productController.productBySlug);
 
